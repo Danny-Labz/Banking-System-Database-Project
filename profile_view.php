@@ -1,106 +1,112 @@
-<?php
-include("config.php");
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f2f2f2;
+    padding: 2rem;
+  }
 
-// Fetch Customer
-$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+  .profile-header {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Form was submitted — update customer
-    $stmt = $conn->prepare("UPDATE Customer SET FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=? WHERE CustomerID=?");
-    $stmt->bind_param("sssssssi",
-        $_POST['FirstName'],
-        $_POST['LastName'],
-        $_POST['DateOfBirth'],
-        $_POST['SSN'],
-        $_POST['Email'],
-        $_POST['PhoneNumber'],
-        $_POST['Address'],
-        $customerID
-    );
-    $stmt->execute();
-    $stmt->close();
-}
+  .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-image: url('https://avatars.githubusercontent.com/u/1?v=4');
+    background-size: cover;
+    background-position: center;
+    margin-right: 1.5rem;
+    border: 3px solid #88f297;
+  }
 
-// Always fetch current data
-$stmt = $conn->prepare("SELECT * FROM Customer WHERE CustomerID = ?");
-$stmt->bind_param("i", $customerID);
-$stmt->execute();
-$result = $stmt->get_result();
-$customer = $result->fetch_assoc();
-$stmt->close();
-$conn->close();
+  .name input {
+    font-size: 1.8rem;
+    font-weight: bold;
+    border: none;
+    background: transparent;
+    color: #000;
+    margin-bottom: 0.3rem;
+  }
 
-if (!$customer) {
-    die("Customer not found.");
-}
-?>
+  .section {
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Customer Profile View</title>
-  <style>
-    body { font-family: Arial; background: #f4f4f4; padding: 2rem; }
-    .form-section {
-      background: #fff; padding: 2rem; border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 700px; margin: auto;
-    }
-    .avatar { float: left; margin-right: 1rem; border-radius: 50%; width: 80px; height: 80px; background: url('https://via.placeholder.com/80') no-repeat center; background-size: cover; }
-    .form-header { display: flex; align-items: center; margin-bottom: 2rem; }
-    .form-header h2 { margin: 0; }
-    label { display: block; margin-top: 1rem; font-weight: bold; }
-    input[type="text"], input[type="email"], input[type="date"] {
-      width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;
-    }
-    button {
-      margin-top: 1.5rem; padding: 0.7rem 1.5rem; font-size: 1rem;
-      border: none; border-radius: 4px; cursor: pointer;
-    }
-    #editBtn { background-color: #007bff; color: #fff; }
-    #saveBtn { background-color: #28a745; color: #fff; display: none; }
-  </style>
-  <script>
-    function enableEdit() {
-      const inputs = document.querySelectorAll("input[type='text'], input[type='email'], input[type='date']");
-      inputs.forEach(input => input.disabled = false);
-      document.getElementById("editBtn").style.display = "none";
-      document.getElementById("saveBtn").style.display = "inline-block";
-    }
-  </script>
-</head>
-<body>
+  .section h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    color: #000;
+    border-bottom: 2px solid #88f297;
+    padding-bottom: 0.5rem;
+  }
 
-  <form method="POST" class="form-section">
-    <div class="form-header">
-      <div class="avatar"></div>
-      <h2><?= htmlspecialchars($customer['FirstName'] . ' ' . $customer['LastName']) ?></h2>
-    </div>
+  .info {
+    margin-top: 1rem;
+  }
 
-    <label>First Name</label>
-    <input type="text" name="FirstName" value="<?= htmlspecialchars($customer['FirstName']) ?>" disabled>
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
 
-    <label>Last Name</label>
-    <input type="text" name="LastName" value="<?= htmlspecialchars($customer['LastName']) ?>" disabled>
+  input[type="text"],
+  input[type="email"],
+  input[type="date"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    font-size: 1rem;
+  }
 
-    <label>Date of Birth</label>
-    <input type="date" name="DateOfBirth" value="<?= $customer['DateOfBirth'] ?>" disabled>
+  button {
+    padding: 0.7rem 1.4rem;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
 
-    <label>SSN</label>
-    <input type="text" name="SSN" value="<?= $customer['SSN'] ?>" disabled>
+  #editBtn {
+    background-color: #88f297;
+    color: #000;
+  }
 
-    <label>Email</label>
-    <input type="email" name="Email" value="<?= $customer['Email'] ?>" disabled>
+  #editBtn:hover {
+    background-color: #6ed87b;
+  }
 
-    <label>Phone Number</label>
-    <input type="text" name="PhoneNumber" value="<?= $customer['PhoneNumber'] ?>" disabled>
+  #saveBtn {
+    background-color: #4CAF50;
+    color: white;
+    display: none;
+  }
 
-    <label>Address</label>
-    <input type="text" name="Address" value="<?= $customer['Address'] ?>" disabled>
+  #saveBtn:hover {
+    background-color: #45a049;
+  }
 
-    <button type="button" id="editBtn" onclick="enableEdit()">Edit</button>
-    <button type="submit" id="saveBtn">Save Changes</button>
-  </form>
+  .button-row {
+    text-align: center;
+    margin-top: 1rem;
+  }
 
-</body>
-</html>
+  input[disabled] {
+    background-color: #eee;
+    color: #555;
+  }
+</style>
