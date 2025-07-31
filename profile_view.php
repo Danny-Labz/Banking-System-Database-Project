@@ -1,10 +1,8 @@
 <?php
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include 'config.php';
-
 
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -21,25 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $zip = $_POST['zip'];
   $country = $_POST['country'];
 
-  $update_sql = "UPDATE Customer SET
-    FirstName = '$firstName',
-    LastName = '$lastName',
-    DateOfBirth = '$dob',
-    SSN = '$ssn',
-    Email = '$email',
-    PhoneNumber = '$phone',
-    Address = '$address',
-    City = '$city',
-    State = '$state',
-    Zip = '$zip',
-    Country = '$country'
-    WHERE CustomerID = $customerID";
+  $stmt = $conn->prepare("UPDATE Customer SET
+    FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=?, City=?, State=?, Zip=?, Country=?
+    WHERE CustomerID=?");
 
-  if ($conn->query($update_sql) === TRUE) {
+  $stmt->bind_param("sssssssssssi",
+    $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $customerID
+  );
+
+  if ($stmt->execute()) {
     echo "<script>alert('Customer updated successfully'); window.location.href='profile_view.php?id=$customerID';</script>";
     exit;
   } else {
-    echo "Error updating record: " . $conn->error;
+    echo "Error: " . $stmt->error;
   }
 }
 
