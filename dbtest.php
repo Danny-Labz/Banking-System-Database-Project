@@ -4,5 +4,5 @@ ini_set('display_errors', 1);
 
 include 'config.php';
 
-echo "✅ Connected to database successfully!";
+echo "Connected to database successfully!";
 ?>

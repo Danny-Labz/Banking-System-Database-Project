@@ -1,7 +1,47 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'config.php';
 
+
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $firstName = $_POST['firstName'];
+  $lastName = $_POST['lastName'];
+  $dob = $_POST['dob'];
+  $ssn = $_POST['ssn'];
+  $email = $_POST['email'];
+  $phone = $_POST['phone'];
+  $address = $_POST['address'];
+  $city = $_POST['city'];
+  $state = $_POST['state'];
+  $zip = $_POST['zip'];
+  $country = $_POST['country'];
+
+  $update_sql = "UPDATE Customer SET
+    FirstName = '$firstName',
+    LastName = '$lastName',
+    DateOfBirth = '$dob',
+    SSN = '$ssn',
+    Email = '$email',
+    PhoneNumber = '$phone',
+    Address = '$address',
+    City = '$city',
+    State = '$state',
+    Zip = '$zip',
+    Country = '$country'
+    WHERE CustomerID = $customerID";
+
+  if ($conn->query($update_sql) === TRUE) {
+    echo "<script>alert('Customer updated successfully'); window.location.href='profile_view.php?id=$customerID';</script>";
+    exit;
+  } else {
+    echo "Error updating record: " . $conn->error;
+  }
+}
 
 $sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
 $result = $conn->query($sql);
@@ -113,60 +153,58 @@ if ($result && $result->num_rows > 0) {
   </style>
 </head>
 <body>
-  <div class="profile-header">
-    <div class="avatar"></div>
-    <div class="name">
-      <input type="text" id="firstName" value="<?php echo htmlspecialchars($row['FirstName']); ?>" disabled />
+  <form method="POST">
+    <div class="profile-header">
+      <div class="avatar"></div>
+      <div class="name">
+        <input type="text" name="firstName" id="firstName" value="<?php echo htmlspecialchars($row['FirstName']); ?>" disabled />
+      </div>
     </div>
-  </div>
 
-  <div class="section">
-    <h3>Demographics</h3>
-    <label>Last Name</label>
-    <input type="text" id="lastName" value="<?php echo htmlspecialchars($row['LastName']); ?>" disabled>
+    <div class="section">
+      <h3>Demographics</h3>
+      <label>Last Name</label>
+      <input type="text" name="lastName" id="lastName" value="<?php echo htmlspecialchars($row['LastName']); ?>" disabled>
 
-    <label>Date of Birth</label>
-    <input type="date" id="dob" value="<?php echo htmlspecialchars($row['DateOfBirth']); ?>" disabled>
+      <label>Date of Birth</label>
+      <input type="date" name="dob" id="dob" value="<?php echo htmlspecialchars($row['DateOfBirth']); ?>" disabled>
 
-    <label>SSN</label>
-    <input type="text" id="ssn" value="<?php echo htmlspecialchars($row['SSN']); ?>" disabled>
+      <label>SSN</label>
+      <input type="text" name="ssn" id="ssn" value="<?php echo htmlspecialchars($row['SSN']); ?>" disabled>
 
-    <label>Email</label>
-    <input type="email" id="email" value="<?php echo htmlspecialchars($row['Email']); ?>" disabled>
+      <label>Email</label>
+      <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($row['Email']); ?>" disabled>
 
-    <label>Phone</label>
-    <input type="text" id="phone" value="<?php echo htmlspecialchars($row['PhoneNumber']); ?>" disabled>
+      <label>Phone</label>
+      <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($row['PhoneNumber']); ?>" disabled>
 
-    <label>Address</label>
-    <input type="text" id="address" value="<?php echo htmlspecialchars($row['Address']); ?>" disabled>
+      <label>Address</label>
+      <input type="text" name="address" id="address" value="<?php echo htmlspecialchars($row['Address']); ?>" disabled>
 
-    <label>City</label>
-    <input type="text" id="city" value="<?php echo htmlspecialchars($row['City']); ?>" disabled>
+      <label>City</label>
+      <input type="text" name="city" id="city" value="<?php echo htmlspecialchars($row['City']); ?>" disabled>
 
-    <label>State</label>
-    <input type="text" id="state" value="<?php echo htmlspecialchars($row['State']); ?>" disabled>
+      <label>State</label>
+      <input type="text" name="state" id="state" value="<?php echo htmlspecialchars($row['State']); ?>" disabled>
 
-    <label>Zip</label>
-    <input type="text" id="zip" value="<?php echo htmlspecialchars($row['Zip']); ?>" disabled>
+      <label>Zip</label>
+      <input type="text" name="zip" id="zip" value="<?php echo htmlspecialchars($row['Zip']); ?>" disabled>
 
-    <label>Country</label>
-    <input type="text" id="country" value="<?php echo htmlspecialchars($row['Country']); ?>" disabled>
-  </div>
+      <label>Country</label>
+      <input type="text" name="country" id="country" value="<?php echo htmlspecialchars($row['Country']); ?>" disabled>
+    </div>
 
-  <div class="button-row">
-    <button id="editBtn" onclick="enableEdit()">Edit</button>
-    <button id="saveBtn" onclick="submitEdits()">Save</button>
-  </div>
+    <div class="button-row">
+      <button type="button" id="editBtn" onclick="enableEdit()">Edit</button>
+      <button type="submit" id="saveBtn">Save</button>
+    </div>
+  </form>
 
   <script>
     function enableEdit() {
       document.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'));
       document.getElementById('editBtn').style.display = 'none';
       document.getElementById('saveBtn').style.display = 'inline-block';
-    }
-
-    function submitEdits() {
-      alert("Saving changes would go here via JS or form submission.");
     }
   </script>
 </body>
