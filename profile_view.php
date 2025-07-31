@@ -110,3 +110,12 @@
     color: #555;
   }
 </style>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Page</title>
+</head>
+<body>
+  The code updated and must be fixed in the profile_view.php file.
+</body>
+</html>
