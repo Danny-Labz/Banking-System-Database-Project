@@ -1,6 +1,16 @@
 <?php
     include("config.php");
 
+session_start();
+if (isset($_SESSION['CustomerID'])) {
+
+    $customerID = $_SESSION['CustomerID'];
+}
+else {
+
+    echo "No Customer ID Found!";
+}
+
 
 /*
     selecting whatever query template
@@ -33,7 +43,7 @@
         <?php
         
         #select stuff from table 
-        $sql = "SELECT Customer.username, BankAccount.Balance, BankAccount.AccountType " 
+        $sql = "SELECT Customer.FirstName, BankAccount.Balance, BankAccount.AccountType " 
             . "FROM BankAccount "
             . "INNER JOIN Customer ON BankAccount.CustomerID = Customer.CustomerID "
             . "WHERE Customer.CustomerID = '$customerID'";
@@ -45,7 +55,7 @@
 
             #displays all results 
             $row = mysqli_fetch_assoc($result);
-            echo "<p>Hello, " . $row["username"] . "</p>";
+            echo "<p>Hello, " . $row["FirstName"] . "</p>";
 
                 echo "<ul>";
                 foreach($result as $row){
@@ -113,7 +123,7 @@
                 <li><a href="TransactionLog.php">Transaction Log</a></li>
                 <li><a href="profile_view.php">Profile View</a></li>
                 <li><a href="Branch.php">Your Branch</a></li>
-                <li><a href="login.php">Logout</a></li>
+                <li><a href="">Logout</a></li>
 
                 <?php
 

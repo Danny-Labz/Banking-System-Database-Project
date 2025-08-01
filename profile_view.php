@@ -1,18 +1,24 @@
 <?php
+session_start();
 include 'config.php';
 
 $statusMessage = "";
 
-// Database connection confirmation
+// Confirm session and set ID
+if (!isset($_SESSION['CustomerID'])) {
+    $statusMessage .= "<p style='color:red;'>No customer session found. Please <a href='login.php'>login</a>.</p>";
+    exit;
+}
+
+$customerID = intval($_SESSION['CustomerID']);
+
+// Confirm DB connection
 if ($conn->connect_error) {
     $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
 } else {
     $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
 }
-
-// Pull customer ID from query string
-$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Get customer data
 $sql = "SELECT * FROM Customer WHERE CustomerID = ?";
@@ -41,6 +47,7 @@ if ($result && $result->num_rows > 0) {
     }
     .profile-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       background: #ffffff;
       border-radius: 16px;
@@ -55,17 +62,29 @@ if ($result && $result->num_rows > 0) {
       background-image: url('https://avatars.githubusercontent.com/u/1?v=4');
       background-size: cover;
       background-position: center;
-      margin-right: 1.5rem;
       border: 3px solid #88f297;
     }
-    .name input {
+    .header-info {
+      flex: 1;
+      padding: 0 1rem;
+    }
+    .header-info .name {
       font-size: 1.8rem;
       font-weight: bold;
-      border: none;
-      background: transparent;
-      color: #000;
-      margin-bottom: 0.3rem;
+      margin: 0;
     }
+    .header-info .address,
+    .header-info .phone {
+      font-size: 1rem;
+      color: #555;
+      margin: 2px 0;
+    }
+    .header-email {
+      font-size: 0.9rem;
+      color: #333;
+      text-align: right;
+    }
+
     .section {
       background: #ffffff;
       padding: 1.5rem 2rem;
@@ -140,17 +159,20 @@ if ($result && $result->num_rows > 0) {
   <form method="POST" action="update_customer.php">
     <div class="profile-header">
       <div class="avatar"></div>
-      <div class="name">
-        <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled />
-        <input type="hidden" name="customerID" value="<?= $customerID ?>">
+      <div class="header-info">
+        <p class="name"><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></p>
+        <p class="address"><?= htmlspecialchars($row['Address']) ?></p>
+        <p class="phone">📞 <?= htmlspecialchars($row['PhoneNumber']) ?></p>
+      </div>
+      <div class="header-email">
+        📧 <?= htmlspecialchars($row['Email']) ?>
       </div>
     </div>
 
+    <input type="hidden" name="customerID" value="<?= $customerID ?>">
+
     <div class="section">
       <h3>Demographics</h3>
-
-      <label>Last Name</label>
-      <input type="text" name="lastName" id="lastName" value="<?= htmlspecialchars($row['LastName']) ?>" disabled>
 
       <label>Date of Birth</label>
       <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($row['DateOfBirth']) ?>" disabled>
@@ -158,26 +180,14 @@ if ($result && $result->num_rows > 0) {
       <label>SSN</label>
       <input type="text" name="ssn" id="ssn" value="<?= htmlspecialchars($row['SSN']) ?>" disabled>
 
+      <label>Address Line 1</label>
+      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
+
       <label>Email</label>
       <input type="email" name="email" id="email" value="<?= htmlspecialchars($row['Email']) ?>" disabled>
 
       <label>Phone</label>
       <input type="text" name="phone" id="phone" value="<?= htmlspecialchars($row['PhoneNumber']) ?>" disabled>
-
-      <label>Address</label>
-      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
-
-      <label>City</label>
-      <input type="text" name="city" id="city" value="<?= htmlspecialchars($row['City']) ?>" disabled>
-
-      <label>State</label>
-      <input type="text" name="state" id="state" value="<?= htmlspecialchars($row['State']) ?>" disabled>
-
-      <label>Zip</label>
-      <input type="text" name="zip" id="zip" value="<?= htmlspecialchars($row['Zip']) ?>" disabled>
-
-      <label>Country</label>
-      <input type="text" name="country" id="country" value="<?= htmlspecialchars($row['Country']) ?>" disabled>
     </div>
 
     <div class="button-row">
@@ -185,6 +195,21 @@ if ($result && $result->num_rows > 0) {
       <button type="submit" id="saveBtn">Save</button>
     </div>
   </form>
+
+  <div class="button-row">
+    <a href="bankaccount.php" style="
+      display: inline-block;
+      padding: 0.7rem 1.4rem;
+      background-color: #45a049;
+      color: #000;
+      border-radius: 20px;
+      text-decoration: none;
+      margin-top: 1rem;
+      font-weight: bold;
+    ">
+      ← Back to Accounts
+    </a>
+  </div>
 
   <div class="status-box">
     <h4>🔍 System Messages</h4>
@@ -198,19 +223,5 @@ if ($result && $result->num_rows > 0) {
       document.getElementById('saveBtn').style.display = 'inline-block';
     }
   </script>
-  <div class="button-row">
-  <a href="bankaccount.php?id=<?= $customerID ?>" style="
-    display: inline-block;
-    padding: 0.7rem 1.4rem;
-    background-color: #45a049;
-    color: #000;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 1rem;
-    font-weight: bold;
-  ">
-    ← Back to Accounts
-  </a>
-</div>
 </body>
 </html>

@@ -1,7 +1,15 @@
 <?php
-    include("database.php");
-    include("tempNums.php");
+    include("config.php");
+    
+session_start();
+if (isset($_SESSION['CustomerID'])) {
 
+    $customerID = $_SESSION['CustomerID'];
+}
+else {
+
+    echo "No Customer ID Found!";
+}
 /*
     selecting whatever query template
 
@@ -143,7 +151,7 @@
             <?php
 
             #basic query to get all transactions
-            $sql = "SELECT customer.username, customer.password, AccountLedger.AccountID, AccountType, "
+            $sql = "SELECT AccountLedger.AccountID, AccountType, "
                 . "TransactionID, TransactionAmount, TransactionType, "
                 . "TransactionTime, RunningBalance "
                 . "FROM AccountLedger "
