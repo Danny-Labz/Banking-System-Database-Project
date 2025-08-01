@@ -123,7 +123,17 @@ else {
                 <li><a href="TransactionLog.php">Transaction Log</a></li>
                 <li><a href="profile_view.php">Profile View</a></li>
                 <li><a href="Branch.php">Your Branch</a></li>
-                <li><a href="">Logout</a></li>
+                <?php
+                if (isset($_GET['logout'])) {
+                    session_unset();
+                    session_destroy();
+                    header("Location: login.php");
+                    exit();
+                }
+                ?>
+                <li><a href="?logout=true">Logout</a></li>
+
+
 
                 <?php
 
