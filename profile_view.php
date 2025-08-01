@@ -4,7 +4,6 @@ include 'config.php';
 
 $statusMessage = "";
 
-// Check session
 if (!isset($_SESSION['CustomerID'])) {
     echo "<p style='color:red;'>No customer session found. Please <a href='login.php'>login</a>.</p>";
     exit;
@@ -12,7 +11,6 @@ if (!isset($_SESSION['CustomerID'])) {
 
 $customerID = intval($_SESSION['CustomerID']);
 
-// Redirect status message
 if (isset($_GET['status'])) {
     if ($_GET['status'] === 'success') {
         $statusMessage .= "<p style='color:green;'>Profile updated successfully.</p>";
@@ -31,6 +29,7 @@ $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
+    $maskedSSN = '***-**-' . substr($row['SSN'], -4);
 } else {
     echo "<p style='color:red;'>Customer not found.</p>";
     exit;
@@ -179,7 +178,7 @@ if ($result && $result->num_rows > 0) {
       <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($row['DateOfBirth']) ?>" disabled>
 
       <label>SSN</label>
-      <input type="text" name="ssn" id="ssn" value="<?= htmlspecialchars($row['SSN']) ?>" disabled>
+      <input type="text" name="ssn" id="ssn" value="<?= $maskedSSN ?>" disabled>
 
       <label>Address Line 1</label>
       <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
@@ -212,57 +211,57 @@ if ($result && $result->num_rows > 0) {
     </a>
   </div>
 
-    <div class="status-box">
-  <h4>🔍 System Messages</h4>
-  <?= $statusMessage ?>
+  <div class="status-box">
+    <h4>🔍 System Messages</h4>
+    <?= $statusMessage ?>
 
-  <?php
-  if (isset($_GET['status']) && $_GET['status'] === 'success') {
-      $checkSQL = "SELECT CustomerID, FirstName, LastName, DateOfBirth, SSN, Email, PhoneNumber, Address, RoleAccess FROM Customer WHERE CustomerID = ?";
-      $checkStmt = $conn->prepare($checkSQL);
-      $checkStmt->bind_param("i", $customerID);
-      $checkStmt->execute();
-      $checkResult = $checkStmt->get_result();
+    <?php
+    if (isset($_GET['status']) && $_GET['status'] === 'success') {
+        $checkSQL = "SELECT CustomerID, FirstName, LastName, DateOfBirth, SSN, Email, PhoneNumber, Address, RoleAccess FROM Customer WHERE CustomerID = ?";
+        $checkStmt = $conn->prepare($checkSQL);
+        $checkStmt->bind_param("i", $customerID);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
 
-      if ($checkResult && $checkResult->num_rows > 0) {
-          $updated = $checkResult->fetch_assoc();
-          echo "<hr><p><strong>DB Update Confirmed. Current Record:</strong></p>";
-          echo "<table style='width:100%; border-collapse: collapse; font-size: 0.95rem;'>
-                  <thead>
-                    <tr style='background:#eee; text-align:left;'>
-                      <th style='border:1px solid #ccc; padding:8px;'>CustomerID</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>FirstName</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>LastName</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>DateOfBirth</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>SSN</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>Email</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>Phone</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>Address</th>
-                      <th style='border:1px solid #ccc; padding:8px;'>Role</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['CustomerID']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['FirstName']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['LastName']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['DateOfBirth']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>***-**-<?= htmlspecialchars(substr($updated['SSN'], -4)) ?></td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['Email']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['PhoneNumber']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['Address']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['RoleAccess']}</td>
-                    </tr>
-                  </tbody>
-                </table>";
-      } else {
-          echo "<p style='color:red;'>⚠ Could not retrieve updated values from the database.</p>";
-      }
-      $checkStmt->close();
-  }
-  ?>
-</div>
-
+        if ($checkResult && $checkResult->num_rows > 0) {
+            $updated = $checkResult->fetch_assoc();
+            $masked = '***-**-' . substr($updated['SSN'], -4);
+            echo "<hr><p><strong>DB Update Confirmed. Current Record:</strong></p>";
+            echo "<table style='width:100%; border-collapse: collapse; font-size: 0.95rem;'>
+                    <thead>
+                      <tr style='background:#eee; text-align:left;'>
+                        <th style='border:1px solid #ccc; padding:8px;'>CustomerID</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>FirstName</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>LastName</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>DateOfBirth</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>SSN</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>Email</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>Phone</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>Address</th>
+                        <th style='border:1px solid #ccc; padding:8px;'>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['CustomerID']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['FirstName']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['LastName']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['DateOfBirth']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$masked}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['Email']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['PhoneNumber']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['Address']}</td>
+                        <td style='border:1px solid #ccc; padding:8px;'>{$updated['RoleAccess']}</td>
+                      </tr>
+                    </tbody>
+                  </table>";
+        } else {
+            echo "<p style='color:red;'>⚠ Could not retrieve updated values from the database.</p>";
+        }
+        $checkStmt->close();
+    }
+    ?>
+  </div>
 
   <script>
     function enableEdit() {
