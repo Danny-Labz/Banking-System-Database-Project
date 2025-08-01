@@ -1,7 +1,7 @@
 
 DROP TABLE IF EXISTS AccountLedger;
 DROP TABLE IF EXISTS BankAccount;
-DROP TABLE IF EXISTS SecurityVerfication;
+DROP TABLE IF EXISTS SecurityVerification;
 DROP TABLE IF EXISTS RoleAccess;
 DROP TABLE IF EXISTS Customer;
 
@@ -46,7 +46,7 @@ CREATE TABLE RoleAccess(
 
 -- Security Verification Table - Alex 
 
-CREATE TABLE SecurityVerification(
+CREATE TABLE SecurityVerification (
     SecurityVerificationID INTEGER AUTO_INCREMENT PRIMARY KEY,
     SSN INTEGER NOT NULL UNIQUE, 
     Username TEXT NOT NULL,
@@ -58,8 +58,6 @@ CREATE TABLE SecurityVerification(
     SecurityQuestion2 TEXT NOT NULL,
     SecurityAnswer2 TEXT NOT NULL,
     CustomerID INTEGER NOT NULL,
-    --#RoleID INTEGER NOT NULL,
-
     FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID)
     --#FOREIGN KEY (RoleID) REFERENCES RoleAccess(RoleID)
     );
