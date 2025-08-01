@@ -27,9 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $fullAddress, $id);
 
     if ($stmt->execute()) {
-        echo "Customer profile updated successfully.";
+        // ✅ Redirect back to profile_view with ID and success flag
+        header("Location: profile_view.php?id=$id&status=success");
+        exit;
     } else {
-        echo "Error: " . $stmt->error;
+        // ❌ Redirect back with error
+        header("Location: profile_view.php?id=$id&status=error&msg=" . urlencode($stmt->error));
+        exit;
     }
 
     $stmt->close();
