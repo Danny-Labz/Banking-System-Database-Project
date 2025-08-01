@@ -3,22 +3,33 @@ DROP TABLE IF EXISTS AccountLedger;
 DROP TABLE IF EXISTS BankAccount;
 DROP TABLE IF EXISTS SecurityVerfication;
 DROP TABLE IF EXISTS RoleAccess;
-
-DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS Customer;
 
 
 -- Customer Table - Danny 
 
-CREATE TABLE Customer(
-    CustomerID INTEGER AUTO_IgitNCREMENT PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL
+CREATE TABLE Customer (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    SSN CHAR(11) UNIQUE NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    PhoneNumber CHAR(10),
+    Address VARCHAR(200),
+    RoleAccess TINYINT DEFAULT 1,  -- 1 = viewer, 2 = admin
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO Customer (CustomerID, username, password) VALUES
-(1, 'bruhdy', 'test123'),
-(2, 'Alux', 'pass456'),
-(3, 'Donnyy', 'Word789');
+INSERT INTO Customer (
+    FirstName, LastName, DateOfBirth, SSN, Email, PhoneNumber, Address, RoleAccess
+) VALUES
+('Bruhdy', 'Bro', '1980-04-15', '116-82-3563', 'Bruhdy.Bro@email.com', '3053612233', '101 Ocean Blvd', 2),
+('Danny', 'Labz', '1992-08-05', '112-39-4451', 'Danny.Labz@email.com', '3052222344', '202 Pine Street', 1),
+('Mike', 'GitA', '1985-01-22', '331-45-9913', 'Mike.GitA@email.com', '3053334115', '303 Palm Avenue', 2),
+('Nicholas', 'Rivera', '1979-12-11', '421-50-6236', 'nicholas.rivera@email.com', '3054445226', '404 Maple Drive', 1),
+('Jessica', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1);
+
 
 
 -- Role Access Table - Alex 
