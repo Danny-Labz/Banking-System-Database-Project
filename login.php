@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($_SESSION['Role'] == 2) {
                 header("Location: admin.php");
             } else {
-                header("Location: BankAccount.php");
+                header("Location: securityVerification.php");
             }
             exit;
         } else {
