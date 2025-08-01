@@ -247,7 +247,7 @@ if ($result && $result->num_rows > 0) {
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['FirstName']}</td>
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['LastName']}</td>
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['DateOfBirth']}</td>
-                      <td style='border:1px solid #ccc; padding:8px;'>{$updated['SSN']}</td>
+                      <td style='border:1px solid #ccc; padding:8px;'>***-**-<?= htmlspecialchars(substr($updated['SSN'], -4)) ?></td>
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['Email']}</td>
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['PhoneNumber']}</td>
                       <td style='border:1px solid #ccc; padding:8px;'>{$updated['Address']}</td>
