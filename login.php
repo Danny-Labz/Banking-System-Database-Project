@@ -14,16 +14,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        if ($password === $user['password']) { // lowercase 'password' to match column name
+        if ($password === $user['password']) {
             $_SESSION['CustomerID'] = $user['CustomerID'];
-            $_SESSION['Role'] = $user['Rolename'] ?? ''; // avoid error if null
+            $_SESSION['Role'] = $user['Rolename'] ?? '';
             $_SESSION['username'] = $user['username'];
 
             // Redirect based on role
             if ($_SESSION['Role'] === 'Admin') {
                 header("Location: admin.php");
             } else {
-                header("Location: dashboard.php");
+                header("Location: security.php");
             }
             exit;
         } else {
