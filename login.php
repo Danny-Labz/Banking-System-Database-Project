@@ -3,10 +3,10 @@ session_start();
 require_once 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = $_POST['Username'];
+    $password = $_POST['Password'];
 
-    $stmt = $conn->prepare("SELECT * FROM Customer WHERE username = ?");
+    $stmt = $conn->prepare("SELECT * FROM SecurityVerification WHERE Username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -14,20 +14,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        if ($password === $user['password']) {
+        if ($password === $user['Password']) {
             $_SESSION['CustomerID'] = $user['CustomerID'];
             $_SESSION['Role'] = $user['Rolename'] ?? '';
-            $_SESSION['username'] = $user['username'];
+            $_SESSION['Username'] = $user['Username'];
 
             // Redirect based on role
-            if ($_SESSION['Role'] === 'Admin') {
+            if ($_SESSION['Role'] == 2) {
                 header("Location: admin.php");
             } else {
-                header("Location: security.php");
+                header("Location: BankAccount.php");
             }
             exit;
         } else {
-            $error = "Incorrect password.";
+            $error = "Incorrect Password.";
         }
     } else {
         $error = "User not found.";
@@ -65,7 +65,7 @@ font-size: 40px;
 margin-bottom: 20px;
 }
 
-input[type="text"], input[type="password"]{
+input[type="text"], input[type="Password"]{
 font-family: Segoe UI, sans-serif;
 font-size: 16px;
 margin-top: 10px;
@@ -89,8 +89,8 @@ margin-top: 20px;
 <?php endif; ?>
   <p>Wecolme to your personal online banking experience!</p>
   <form action="login.php" method="POST">
-    Username: <input type="text" name="username" required><br>
-    Password: <input type="password" name="password" required><br>
+    Username: <input type="text" name="Username" required><br>
+    Password: <input type="password" name="Password" required><br>
 
     <button type="submit">Login</button> <button type="reset">Clear</button>
   </form>
