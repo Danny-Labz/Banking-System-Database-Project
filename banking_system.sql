@@ -23,11 +23,11 @@ CREATE TABLE Customer (
 INSERT INTO Customer (
     FirstName, LastName, DateOfBirth, SSN, Email, PhoneNumber, Address, RoleAccess, BranchID
 ) VALUES
-('Bruhdy', 'Bro', '1980-04-15', '116-82-3563', 'Bruhdy.Bro@email.com', '3053612233', '101 Ocean Blvd', 2,102),
-('Danny', 'Labz', '1992-08-05', '112-39-4451', 'Danny.Labz@email.com', '3052222344', '202 Pine Street', 1,104),
-('Mike', 'GitA', '1985-01-22', '331-45-9913', 'Mike.GitA@email.com', '3053334115', '303 Palm Avenue', 2,107),
-('Nicholas', 'Rivera', '1979-12-11', '421-50-6236', 'nicholas.rivera@email.com', '3054445226', '404 Maple Drive', 1,108),
-('Jesse', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1,101);
+('Bruhdy', 'Bro', '1980-04-15', '116-82-3563', 'Bruhdy.Bro@email.com', '3053612233', '101 Ocean Blvd', 2,1),
+('Danny', 'Labz', '1992-08-05', '112-39-4451', 'Danny.Labz@email.com', '3052222344', '202 Pine Street', 1,2),
+('Mike', 'GitA', '1985-01-22', '331-45-9913', 'Mike.GitA@email.com', '3053334115', '303 Palm Avenue', 2,6),
+('Nicholas', 'Rivera', '1979-12-11', '421-50-6236', 'nicholas.rivera@email.com', '3054445226', '404 Maple Drive', 1,7),
+('Jesse', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1,9);
 
 -- RoleAccess Table (required by SecurityVerification)
 CREATE TABLE RoleAccess (
