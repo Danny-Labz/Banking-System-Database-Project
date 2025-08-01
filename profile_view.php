@@ -1,19 +1,24 @@
 <?php
+session_start();
 include 'config.php';
-
 
 $statusMessage = "";
 
-// Database connection confirmation
+// Confirm session and set ID
+if (!isset($_SESSION['CustomerID'])) {
+    $statusMessage .= "<p style='color:red;'>No customer session found. Please <a href='login.php'>login</a>.</p>";
+    exit;
+}
+
+$customerID = intval($_SESSION['CustomerID']);
+
+// Confirm DB connection
 if ($conn->connect_error) {
     $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
 } else {
-    $statusMessage .= "<p style='color:green;'> Database connection successful.</p>";
+    $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
 }
-
-// Pull customer ID from query string
-$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Get customer data
 $sql = "SELECT * FROM Customer WHERE CustomerID = ?";
@@ -24,7 +29,7 @@ $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $statusMessage .= "<p>Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
+    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
 } else {
     $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
     exit;
@@ -59,21 +64,27 @@ if ($result && $result->num_rows > 0) {
       background-position: center;
       border: 3px solid #88f297;
     }
-    .name, .contact, .email {
+    .header-info {
       flex: 1;
-      text-align: center;
+      padding: 0 1rem;
     }
-    .name {
-      text-align: left;
-    }
-    .name h2 {
+    .header-info .name {
+      font-size: 1.8rem;
+      font-weight: bold;
       margin: 0;
     }
-    .name p {
+    .header-info .address,
+    .header-info .phone {
+      font-size: 1rem;
+      color: #555;
       margin: 2px 0;
-      color: #333;
-      font-size: 0.9rem;
     }
+    .header-email {
+      font-size: 0.9rem;
+      color: #333;
+      text-align: right;
+    }
+
     .section {
       background: #ffffff;
       padding: 1.5rem 2rem;
@@ -148,28 +159,20 @@ if ($result && $result->num_rows > 0) {
   <form method="POST" action="update_customer.php">
     <div class="profile-header">
       <div class="avatar"></div>
-      <div class="name">
-        <h2><?= htmlspecialchars($row['FirstName']) . ' ' . htmlspecialchars($row['LastName']) ?></h2>
-        <p><?= htmlspecialchars($row['Address']) ?></p>
+      <div class="header-info">
+        <p class="name"><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></p>
+        <p class="address"><?= htmlspecialchars($row['Address']) ?></p>
+        <p class="phone">📞 <?= htmlspecialchars($row['PhoneNumber']) ?></p>
       </div>
-      <div class="contact">
-        <p><?= htmlspecialchars($row['PhoneNumber']) ?></p>
-      </div>
-      <div class="email" style="text-align:right;">
-        <p><?= htmlspecialchars($row['Email']) ?></p>
+      <div class="header-email">
+        📧 <?= htmlspecialchars($row['Email']) ?>
       </div>
     </div>
 
+    <input type="hidden" name="customerID" value="<?= $customerID ?>">
+
     <div class="section">
       <h3>Demographics</h3>
-
-      <input type="hidden" name="customerID" value="<?= $customerID ?>">
-
-      <label>First Name</label>
-      <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled>
-
-      <label>Last Name</label>
-      <input type="text" name="lastName" id="lastName" value="<?= htmlspecialchars($row['LastName']) ?>" disabled>
 
       <label>Date of Birth</label>
       <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($row['DateOfBirth']) ?>" disabled>
@@ -194,7 +197,7 @@ if ($result && $result->num_rows > 0) {
   </form>
 
   <div class="button-row">
-    <a href="bankaccount.php?id=<?= $customerID ?>" style="
+    <a href="bankaccount.php" style="
       display: inline-block;
       padding: 0.7rem 1.4rem;
       background-color: #45a049;
