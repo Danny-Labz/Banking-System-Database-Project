@@ -1,6 +1,8 @@
 <?php
 include 'config.php';
 
+<<<<<<< HEAD
+=======
 $statusMessage = "";
 
 // Database connection confirmation
@@ -12,21 +14,33 @@ if ($conn->connect_error) {
 }
 
 // Pull customer ID from query string
+>>>>>>> 3de0c243398efa4b1b98799f4aefdc3f600c4bcc
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$statusMessage = '';
 
+<<<<<<< HEAD
+// Load customer data
+$sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
+$result = $conn->query($sql);
+=======
 // Get customer data
 $sql = "SELECT * FROM Customer WHERE CustomerID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $customerID);
 $stmt->execute();
 $result = $stmt->get_result();
+>>>>>>> 3de0c243398efa4b1b98799f4aefdc3f600c4bcc
 
 if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
+  $row = $result->fetch_assoc();
 } else {
-    $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
-    exit;
+  echo "Customer not found.";
+  exit;
+}
+
+// Handle post-update message
+if (isset($_GET['updated']) && $_GET['updated'] === "true") {
+  $statusMessage = "✅ Profile updated successfully!";
 }
 ?>
 <!DOCTYPE html>
@@ -126,6 +140,15 @@ if ($result && $result->num_rows > 0) {
       background-color: #eee;
       color: #555;
     }
+<<<<<<< HEAD
+    .message-box {
+      background:#fff;
+      border-radius:10px;
+      padding:1rem;
+      margin-top:2rem;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      color:#333;
+=======
     .status-box {
       background: #fff;
       border-radius: 10px;
@@ -133,11 +156,16 @@ if ($result && $result->num_rows > 0) {
       margin-top: 2rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       color: #333;
+>>>>>>> 3de0c243398efa4b1b98799f4aefdc3f600c4bcc
     }
   </style>
 </head>
 <body>
   <form method="POST" action="update_customer.php">
+<<<<<<< HEAD
+    <input type="hidden" name="customerID" value="<?php echo $customerID; ?>">
+=======
+>>>>>>> 3de0c243398efa4b1b98799f4aefdc3f600c4bcc
     <div class="profile-header">
       <div class="avatar"></div>
       <div class="name">
@@ -186,6 +214,11 @@ if ($result && $result->num_rows > 0) {
     </div>
   </form>
 
+<<<<<<< HEAD
+  <script>
+    function enableEdit() {
+      document.querySelectorAll('input:not([type="hidden"])').forEach(el => el.removeAttribute('disabled'));
+=======
   <div class="status-box">
     <h4>🔍 System Messages</h4>
     <?= $statusMessage ?>
@@ -194,9 +227,16 @@ if ($result && $result->num_rows > 0) {
   <script>
     function enableEdit() {
       document.querySelectorAll('input:not([type=hidden])').forEach(el => el.removeAttribute('disabled'));
+>>>>>>> 3de0c243398efa4b1b98799f4aefdc3f600c4bcc
       document.getElementById('editBtn').style.display = 'none';
       document.getElementById('saveBtn').style.display = 'inline-block';
     }
   </script>
+
+  <?php if ($statusMessage): ?>
+    <div class="message-box">
+      <?php echo $statusMessage; ?>
+    </div>
+  <?php endif; ?>
 </body>
 </html>
