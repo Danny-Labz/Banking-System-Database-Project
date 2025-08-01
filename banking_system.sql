@@ -69,7 +69,7 @@ INSERT INTO SecurityVerification (
     SecurityQuestion2, SecurityAnswer2, CustomerID)
 VALUES
 (123, 'Bruhdy', 'letMeIn', 456, 789, 'School?', 'FIU', 'Favorite Color?', 'Blue', 1),
-(246, 'Donny', 'Passing', 357, 101, 'School?', 'FIU', 'Favorite Color?', 'Red', 2),
+(246, 'Danny', 'Passing', 357, 101, 'School?', 'FIU', 'Favorite Color?', 'Red', 2),
 (987, 'Mikky', 'Codez', 654, 321, 'School?', 'FIU', 'Favorite Color?', 'Green', 3);
 
 
