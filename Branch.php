@@ -78,7 +78,7 @@ $branches = mysqli_query($conn, "SELECT * FROM Branch");
 <body>
 
     <div class="sidebar">
-        <h4>📍 Your Branch Info</h4>
+        <h4> Your Branch Info</h4>
         <?php if ($branchProfile): ?>
             <p><strong>Branch ID:</strong> <?= $branchProfile['BranchID'] ?></p>
             <p><strong>Address:</strong><br><?= $branchProfile['Address'] ?></p>

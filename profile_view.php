@@ -15,10 +15,10 @@ $customerID = intval($_SESSION['CustomerID']);
 // Redirect status message
 if (isset($_GET['status'])) {
     if ($_GET['status'] === 'success') {
-        $statusMessage .= "<p style='color:green;'>✅ Profile updated successfully.</p>";
+        $statusMessage .= "<p style='color:green;'>Profile updated successfully.</p>";
     } elseif ($_GET['status'] === 'error') {
         $msg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'Unknown error';
-        $statusMessage .= "<p style='color:red;'>❌ Update failed: $msg</p>";
+        $statusMessage .= "<p style='color:red;'>Update failed: $msg</p>";
     }
 }
 
@@ -226,7 +226,7 @@ if ($result && $result->num_rows > 0) {
 
       if ($checkResult && $checkResult->num_rows > 0) {
           $updated = $checkResult->fetch_assoc();
-          echo "<hr><p><strong>✅ DB Update Confirmed. Current Record:</strong></p>";
+          echo "<hr><p><strong>DB Update Confirmed. Current Record:</strong></p>";
           echo "<table style='width:100%; border-collapse: collapse; font-size: 0.95rem;'>
                   <thead>
                     <tr style='background:#eee; text-align:left;'>
