@@ -1,5 +1,5 @@
 <?php
-    include("database.php");
+    include("config.php");
     include("tempNums.php");
 
 /*
