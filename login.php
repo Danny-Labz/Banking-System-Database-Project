@@ -87,7 +87,7 @@ margin-top: 20px;
 <?php if (!empty($error)): ?>
   <p style="color: red;"><?php echo $error; ?></p>
 <?php endif; ?>
-  <p>Wecolme to your personal online banking experience!</p>
+  <p>Welcome to your personal online banking experience!</p>
   <form action="login.php" method="POST">
     Username: <input type="text" name="username" required><br>
     Password: <input type="password" name="password" required><br>

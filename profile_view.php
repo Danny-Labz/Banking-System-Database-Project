@@ -3,7 +3,7 @@ include 'config.php';
 
 $statusMessage = "";
 
-// Database connection confirmation
+// Confirm database connection
 if ($conn->connect_error) {
     $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
@@ -11,10 +11,10 @@ if ($conn->connect_error) {
     $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
 }
 
-// Pull customer ID from query string
+// Pull customer ID from URL
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Get customer data
+// Fetch customer info
 $sql = "SELECT * FROM Customer WHERE CustomerID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $customerID);
@@ -65,6 +65,10 @@ if ($result && $result->num_rows > 0) {
       background: transparent;
       color: #000;
       margin-bottom: 0.3rem;
+    }
+    .address-display {
+      color: #555;
+      font-size: 1rem;
     }
     .section {
       background: #ffffff;
@@ -143,6 +147,7 @@ if ($result && $result->num_rows > 0) {
       <div class="name">
         <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled />
         <input type="hidden" name="customerID" value="<?= $customerID ?>">
+        <div class="address-display"><?= htmlspecialchars($row['Address']) ?></div>
       </div>
     </div>
 
@@ -164,7 +169,7 @@ if ($result && $result->num_rows > 0) {
       <label>Phone</label>
       <input type="text" name="phone" id="phone" value="<?= htmlspecialchars($row['PhoneNumber']) ?>" disabled>
 
-      <label>Address</label>
+      <label>Address Line 1</label>
       <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
 
       <label>City</label>
@@ -186,6 +191,21 @@ if ($result && $result->num_rows > 0) {
     </div>
   </form>
 
+  <div class="button-row">
+    <a href="bankaccount.php?id=<?= $customerID ?>" style="
+      display: inline-block;
+      padding: 0.7rem 1.4rem;
+      background-color: #45a049;
+      color: #000;
+      border-radius: 20px;
+      text-decoration: none;
+      margin-top: 1rem;
+      font-weight: bold;
+    ">
+      ← Back to Accounts
+    </a>
+  </div>
+
   <div class="status-box">
     <h4>🔍 System Messages</h4>
     <?= $statusMessage ?>
@@ -198,19 +218,5 @@ if ($result && $result->num_rows > 0) {
       document.getElementById('saveBtn').style.display = 'inline-block';
     }
   </script>
-  <div class="button-row">
-  <a href="bankaccount.php?id=<?= $customerID ?>" style="
-    display: inline-block;
-    padding: 0.7rem 1.4rem;
-    background-color: #45a049;
-    color: #000;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 1rem;
-    font-weight: bold;
-  ">
-    ← Back to Accounts
-  </a>
-</div>
 </body>
 </html>
