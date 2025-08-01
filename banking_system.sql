@@ -123,3 +123,25 @@ VALUES
     (400, 'Deposit', '2025-07-03 10:08:42', 1550, 4),
     (200, 'Withdrawal', '2025-07-03 10:09:17', 1350, 4),
     (750, 'Deposit', '2025-07-03 12:14:28', 2100, 4);
+
+    -- Create Branch table
+CREATE TABLE IF NOT EXISTS Branch (
+    BranchID INT PRIMARY KEY,
+    AssignedBankerID INT,
+    Address VARCHAR(255),
+    PhoneNumber VARCHAR(20)
+);
+
+-- Insert dummy data
+INSERT INTO Branch (BranchID, AssignedBankerID, Address, PhoneNumber) VALUES
+    (1, 101, '123 Elm Street, Miami, FL 33101', '(305) 555-1234'),
+    (2, 102, '456 Oak Avenue, Orlando, FL 32801', '(407) 555-5678'),
+    (3, 103, '789 Pine Road, Tampa, FL 33602', '(813) 555-9012'),
+    (4, 104, '321 Maple Blvd, Jacksonville, FL 32202', '(904) 555-3456'),
+    (5, 105, '654 Cedar Lane, Fort Lauderdale, FL 33301', '(954) 555-7890'),
+    (6, 106, '147 Palm Ave, Hialeah, FL 33010', '(786) 555-1122'),
+    (7, 107, '258 Beach St, St. Petersburg, FL 33701', '(727) 555-3344'),
+    (8, 108, '369 Coral Way, Naples, FL 34102', '(239) 555-5566'),
+    (9, 109, '951 Sunset Dr, Tallahassee, FL 32301', '(850) 555-7788'),
+    (10, 110, '753 Ocean Blvd, Sarasota, FL 34236', '(941) 555-9900');
+
