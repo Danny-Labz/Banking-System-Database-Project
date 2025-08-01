@@ -3,29 +3,29 @@ include 'config.php';
 
 $statusMessage = "";
 
-// Confirm DB connection
+// Database connection confirmation
 if ($conn->connect_error) {
-    $statusMessage .= "<p style='color:red;'>❌ Database connection failed: " . $conn->connect_error . "</p>";
+    $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
 } else {
     $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
 }
 
-// Check for redirect status message
-if (isset($_GET['updated']) && $_GET['updated'] === 'true') {
-    $statusMessage .= "<p style='color:green;'>✔️ Customer record successfully updated.</p>";
-}
-
+// Pull customer ID from query string
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-$sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
-$result = $conn->query($sql);
+// Get customer data
+$sql = "SELECT * FROM Customer WHERE CustomerID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $customerID);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
 } else {
-    $statusMessage .= "<p style='color:red;'>❌ Customer not found or invalid ID.</p>";
+    $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
     exit;
 }
 ?>
@@ -138,46 +138,46 @@ if ($result && $result->num_rows > 0) {
 </head>
 <body>
   <form method="POST" action="update_customer.php">
-    <input type="hidden" name="customerID" value="<?php echo $customerID; ?>">
-
     <div class="profile-header">
       <div class="avatar"></div>
       <div class="name">
-        <input type="text" name="firstName" id="firstName" value="<?php echo htmlspecialchars($row['FirstName']); ?>" disabled />
+        <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled />
+        <input type="hidden" name="customerID" value="<?= $customerID ?>">
       </div>
     </div>
 
     <div class="section">
       <h3>Demographics</h3>
+
       <label>Last Name</label>
-      <input type="text" name="lastName" id="lastName" value="<?php echo htmlspecialchars($row['LastName']); ?>" disabled>
+      <input type="text" name="lastName" id="lastName" value="<?= htmlspecialchars($row['LastName']) ?>" disabled>
 
       <label>Date of Birth</label>
-      <input type="date" name="dob" id="dob" value="<?php echo htmlspecialchars($row['DateOfBirth']); ?>" disabled>
+      <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($row['DateOfBirth']) ?>" disabled>
 
       <label>SSN</label>
-      <input type="text" name="ssn" id="ssn" value="<?php echo htmlspecialchars($row['SSN']); ?>" disabled>
+      <input type="text" name="ssn" id="ssn" value="<?= htmlspecialchars($row['SSN']) ?>" disabled>
 
       <label>Email</label>
-      <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($row['Email']); ?>" disabled>
+      <input type="email" name="email" id="email" value="<?= htmlspecialchars($row['Email']) ?>" disabled>
 
       <label>Phone</label>
-      <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($row['PhoneNumber']); ?>" disabled>
+      <input type="text" name="phone" id="phone" value="<?= htmlspecialchars($row['PhoneNumber']) ?>" disabled>
 
       <label>Address</label>
-      <input type="text" name="address" id="address" value="<?php echo htmlspecialchars($row['Address']); ?>" disabled>
+      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
 
       <label>City</label>
-      <input type="text" name="city" id="city" value="<?php echo htmlspecialchars($row['City']); ?>" disabled>
+      <input type="text" name="city" id="city" value="<?= htmlspecialchars($row['City']) ?>" disabled>
 
       <label>State</label>
-      <input type="text" name="state" id="state" value="<?php echo htmlspecialchars($row['State']); ?>" disabled>
+      <input type="text" name="state" id="state" value="<?= htmlspecialchars($row['State']) ?>" disabled>
 
       <label>Zip</label>
-      <input type="text" name="zip" id="zip" value="<?php echo htmlspecialchars($row['Zip']); ?>" disabled>
+      <input type="text" name="zip" id="zip" value="<?= htmlspecialchars($row['Zip']) ?>" disabled>
 
       <label>Country</label>
-      <input type="text" name="country" id="country" value="<?php echo htmlspecialchars($row['Country']); ?>" disabled>
+      <input type="text" name="country" id="country" value="<?= htmlspecialchars($row['Country']) ?>" disabled>
     </div>
 
     <div class="button-row">
@@ -188,7 +188,7 @@ if ($result && $result->num_rows > 0) {
 
   <div class="status-box">
     <h4>🔍 System Messages</h4>
-    <?php echo $statusMessage; ?>
+    <?= $statusMessage ?>
   </div>
 
   <script>
