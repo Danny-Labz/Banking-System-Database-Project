@@ -28,7 +28,7 @@ INSERT INTO Customer (
 ('Danny', 'Labz', '1992-08-05', '112-39-4451', 'Danny.Labz@email.com', '3052222344', '202 Pine Street', 1),
 ('Mike', 'GitA', '1985-01-22', '331-45-9913', 'Mike.GitA@email.com', '3053334115', '303 Palm Avenue', 2),
 ('Nicholas', 'Rivera', '1979-12-11', '421-50-6236', 'nicholas.rivera@email.com', '3054445226', '404 Maple Drive', 1),
-('Jessica', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1);
+('Jesse', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1);
 
 
 

@@ -58,7 +58,7 @@ $result = mysqli_query($conn, "SELECT * FROM Branch");
     <div class="container">
         <h1 class="text-center">Bank Branch Directory</h1>
 
-        <a href="profile_view.php" class="btn btn-secondary mb-3">← Back</a>
+        <a href="BankAccount.php" class="btn btn-secondary mb-3">← Back</a>
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr>
