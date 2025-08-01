@@ -15,7 +15,9 @@ else {
 
 if (!$roleid == 2) {
 
-    echo "Not an administrator!";
+    echo "Not an administrator! Please Log In Again.";
+
+    header( "refresh:5; url=Login.php");
     die();
 }
 

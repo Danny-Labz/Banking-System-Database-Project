@@ -8,7 +8,9 @@ if (isset($_SESSION['CustomerID'])) {
 }
 else {
 
-    echo "No Customer ID Found!";
+    echo "No Customer ID Found! Please Log In Again.";
+    header( "refresh:5; url=Login.php");
+    die();
 }
 /*
     selecting whatever query template

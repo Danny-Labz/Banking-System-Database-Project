@@ -6,10 +6,14 @@ if (isset($_SESSION['CustomerID'])) {
 
     $customerID = $_SESSION['CustomerID'];
     $roleid = $_SESSION['RoleID'];
+
 }
 else {
 
-    echo "No Customer ID Found!";
+    echo "No Customer ID Found! Please Log In Again.";
+
+    header( "refresh:5; url=Login.php");
+    die();
 }
 
 
