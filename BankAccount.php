@@ -5,6 +5,7 @@ session_start();
 if (isset($_SESSION['CustomerID'])) {
 
     $customerID = $_SESSION['CustomerID'];
+    $roleid = $_SESSION['RoleID'];
 }
 else {
 
@@ -137,7 +138,7 @@ else {
 
                 <?php
 
-                if ($roleid == 1) {
+                if ($roleid == 2) {
 
                     echo "<li><a href='AdminstratorViewOnly.php'>Administrator</a></li>";
                 }

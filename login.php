@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($password === $user['Password']) {
             $_SESSION['CustomerID'] = $user['CustomerID'];
-            $_SESSION['Role'] = $user['Rolename'] ?? '';
+            $_SESSION['RoleID'] = $user['RoleID'] ?? '';
             $_SESSION['Username'] = $user['Username'];
 
             // Redirect based on role

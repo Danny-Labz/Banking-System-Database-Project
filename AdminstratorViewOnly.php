@@ -2,8 +2,18 @@
 
 include("config.php");
 
+session_start();
+if (isset($_SESSION['CustomerID'])) {
 
-if (!$roleid == 1) {
+    $customerID = $_SESSION['CustomerID'];
+    $roleid = $_SESSION['RoleID'];
+}
+else {
+
+    echo "No Customer ID Found!";
+}
+
+if (!$roleid == 2) {
 
     echo "Not an administrator!";
     die();
@@ -17,7 +27,7 @@ if (!$roleid == 1) {
         <title>Administrator View</title>
     </head>
 
-    <form action="index.php" style="
+    <form action="BankAccount.php" style="
         border-radius: 25px;
         background: rgba(121, 238, 139, 1);
         padding: 10px; 
@@ -49,7 +59,8 @@ if (!$roleid == 1) {
         <!-- creating table column headers -->
          
             <tr align="center">
-                <th>Username</th>
+                <th>Name</th>
+                <th>Role Access</th>
                 <th>Account ID</th>
                 <th>Account Type</th>
                 <th>Transaction Id</th>
@@ -61,7 +72,7 @@ if (!$roleid == 1) {
 
             <?php
 
-$sql = "SELECT customer.username, customer.password, AccountLedger.AccountID, AccountType, "
+$sql = "SELECT customer.FirstName, customer.LastName, customer.RoleAccess, AccountLedger.AccountID, AccountType, "
                 . "TransactionID, TransactionAmount, TransactionType, "
                 . "TransactionTime, RunningBalance "
                 . "FROM AccountLedger "
@@ -75,7 +86,8 @@ $sql = "SELECT customer.username, customer.password, AccountLedger.AccountID, Ac
                     while($row = mysqli_fetch_assoc($result)){
 
                     echo "<tr align='center'>";
-                    echo "<td>" . $row["username"] . "</td>";
+                    echo "<td>" . $row["FirstName"] ." " . $row["LastName"] . "</td>";
+                    echo "<td>" . $row["RoleAccess"] . "</td>";
                     echo "<td>" . $row["AccountID"] . "</td>";
                     echo "<td>" . $row["AccountType"] . "</td>";
                     echo "<td>" . $row["TransactionID"] . "</td>";
