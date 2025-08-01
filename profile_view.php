@@ -1,50 +1,23 @@
 <?php
 include 'config.php';
 
-$statusMessage = "";
-
-// Database connection confirmation
-if ($conn->connect_error) {
-    $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
-    exit;
-} else {
-    $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
-}
-
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$statusMessage = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $dob = $_POST['dob'];
-    $ssn = $_POST['ssn'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
-    $city = $_POST['city'];
-    $state = $_POST['state'];
-    $zip = $_POST['zip'];
-    $country = $_POST['country'];
-
-    $stmt = $conn->prepare("UPDATE Customer SET FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=?, City=?, State=?, Zip=?, Country=? WHERE CustomerID=?");
-    $stmt->bind_param("sssssssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $customerID);
-
-    if ($stmt->execute()) {
-        $statusMessage .= "<p style='color:green;'>✅ Customer updated successfully.</p>";
-    } else {
-        $statusMessage .= "<p style='color:red;'>❌ Update failed: " . $stmt->error . "</p>";
-    }
-}
-
+// Load customer data
 $sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
+  $row = $result->fetch_assoc();
 } else {
-    $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
-    exit;
+  echo "Customer not found.";
+  exit;
+}
+
+// Handle post-update message
+if (isset($_GET['updated']) && $_GET['updated'] === "true") {
+  $statusMessage = "✅ Profile updated successfully!";
 }
 ?>
 <!DOCTYPE html>
@@ -144,7 +117,7 @@ if ($result && $result->num_rows > 0) {
       background-color: #eee;
       color: #555;
     }
-    .status-box {
+    .message-box {
       background:#fff;
       border-radius:10px;
       padding:1rem;
@@ -155,7 +128,8 @@ if ($result && $result->num_rows > 0) {
   </style>
 </head>
 <body>
-  <form method="POST">
+  <form method="POST" action="update_customer.php">
+    <input type="hidden" name="customerID" value="<?php echo $customerID; ?>">
     <div class="profile-header">
       <div class="avatar"></div>
       <div class="name">
@@ -202,17 +176,18 @@ if ($result && $result->num_rows > 0) {
     </div>
   </form>
 
-  <div class="status-box">
-    <h4>🔍 System Messages</h4>
-    <?php echo $statusMessage; ?>
-  </div>
-
   <script>
     function enableEdit() {
-      document.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'));
+      document.querySelectorAll('input:not([type="hidden"])').forEach(el => el.removeAttribute('disabled'));
       document.getElementById('editBtn').style.display = 'none';
       document.getElementById('saveBtn').style.display = 'inline-block';
     }
   </script>
+
+  <?php if ($statusMessage): ?>
+    <div class="message-box">
+      <?php echo $statusMessage; ?>
+    </div>
+  <?php endif; ?>
 </body>
 </html>
