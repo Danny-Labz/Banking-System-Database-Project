@@ -31,19 +31,6 @@ INSERT INTO Customer (
 ('Jesse', 'Lopez', '1990-07-30', '532-66-7759', 'jessica.lopez@email.com', '3055556627', '505 Elm Street', 1);
 
 
-
--- Role Access Table - Alex 
-/*
-CREATE TABLE RoleAccess(
-    RoleID INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Rolename TEXT NOT NULL,
-    RoleDescription TEXT NOT NULL,
-    SecurityLevel INTEGER NOT NULL,
-    RoleDepartment TEXT NOT NULL,
-    RoleStatus TEXT NOT NULL CHECK (RoleStatus IN ('Active', 'Inactive'))
-);
-*/
-
 -- Security Verification Table - Alex 
 
 CREATE TABLE SecurityVerification(
@@ -58,19 +45,18 @@ CREATE TABLE SecurityVerification(
     SecurityQuestion2 TEXT NOT NULL,
     SecurityAnswer2 TEXT NOT NULL,
     CustomerID INTEGER NOT NULL,
-    --#RoleID INTEGER NOT NULL,
+    RoleID INTEGER NOT NULL,
 
     FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID)
-    --#FOREIGN KEY (RoleID) REFERENCES RoleAccess(RoleID)
     );
 
 INSERT INTO SecurityVerification (
     SSN, Username, Password, SecurityPin, AtmPin, SecurityQuestion, SecurityAnswer, 
     SecurityQuestion2, SecurityAnswer2, CustomerID)
 VALUES
-(123, 'Bruhdy', 'letMeIn', 456, 789, 'School?', 'FIU', 'Favorite Color?', 'Blue', 1),
-(246, 'Donny', 'Passing', 357, 101, 'School?', 'FIU', 'Favorite Color?', 'Red', 2),
-(987, 'Mikky', 'Codez', 654, 321, 'School?', 'FIU', 'Favorite Color?', 'Green', 3);
+(123, 'Bruhdy', 'letMeIn', 456, 789, 'School?', 'FIU', 'Favorite Color?', 'Blue', 1, 2),
+(246, 'Donny', 'Passing', 357, 101, 'School?', 'FIU', 'Favorite Color?', 'Red', 2, 1),
+(987, 'Mikky', 'Codez', 654, 321, 'School?', 'FIU', 'Favorite Color?', 'Green', 3, 1);
 
 
 -- Bank Account Table - Broudy 
