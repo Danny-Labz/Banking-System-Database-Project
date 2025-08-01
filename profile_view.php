@@ -3,18 +3,18 @@ include 'config.php';
 
 $statusMessage = "";
 
-// Confirm database connection
+// Database connection confirmation
 if ($conn->connect_error) {
     $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
 } else {
-    $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
+    $statusMessage .= "<p style='color:green;'> Database connection successful.</p>";
 }
 
-// Pull customer ID from URL
+// Pull customer ID from query string
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Fetch customer info
+// Get customer data
 $sql = "SELECT * FROM Customer WHERE CustomerID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $customerID);
@@ -23,7 +23,7 @@ $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
+    $statusMessage .= "<p>Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
 } else {
     $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
     exit;
@@ -41,6 +41,7 @@ if ($result && $result->num_rows > 0) {
     }
     .profile-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       background: #ffffff;
       border-radius: 16px;
@@ -55,20 +56,22 @@ if ($result && $result->num_rows > 0) {
       background-image: url('https://avatars.githubusercontent.com/u/1?v=4');
       background-size: cover;
       background-position: center;
-      margin-right: 1.5rem;
       border: 3px solid #88f297;
     }
-    .name input {
-      font-size: 1.8rem;
-      font-weight: bold;
-      border: none;
-      background: transparent;
-      color: #000;
-      margin-bottom: 0.3rem;
+    .name, .contact, .email {
+      flex: 1;
+      text-align: center;
     }
-    .address-display {
-      color: #555;
-      font-size: 1rem;
+    .name {
+      text-align: left;
+    }
+    .name h2 {
+      margin: 0;
+    }
+    .name p {
+      margin: 2px 0;
+      color: #333;
+      font-size: 0.9rem;
     }
     .section {
       background: #ffffff;
@@ -145,14 +148,24 @@ if ($result && $result->num_rows > 0) {
     <div class="profile-header">
       <div class="avatar"></div>
       <div class="name">
-        <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled />
-        <input type="hidden" name="customerID" value="<?= $customerID ?>">
-        <div class="address-display"><?= htmlspecialchars($row['Address']) ?></div>
+        <h2><?= htmlspecialchars($row['FirstName']) . ' ' . htmlspecialchars($row['LastName']) ?></h2>
+        <p><?= htmlspecialchars($row['Address']) ?></p>
+      </div>
+      <div class="contact">
+        <p><?= htmlspecialchars($row['PhoneNumber']) ?></p>
+      </div>
+      <div class="email" style="text-align:right;">
+        <p><?= htmlspecialchars($row['Email']) ?></p>
       </div>
     </div>
 
     <div class="section">
       <h3>Demographics</h3>
+
+      <input type="hidden" name="customerID" value="<?= $customerID ?>">
+
+      <label>First Name</label>
+      <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled>
 
       <label>Last Name</label>
       <input type="text" name="lastName" id="lastName" value="<?= htmlspecialchars($row['LastName']) ?>" disabled>
@@ -163,26 +176,14 @@ if ($result && $result->num_rows > 0) {
       <label>SSN</label>
       <input type="text" name="ssn" id="ssn" value="<?= htmlspecialchars($row['SSN']) ?>" disabled>
 
+      <label>Address Line 1</label>
+      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
+
       <label>Email</label>
       <input type="email" name="email" id="email" value="<?= htmlspecialchars($row['Email']) ?>" disabled>
 
       <label>Phone</label>
       <input type="text" name="phone" id="phone" value="<?= htmlspecialchars($row['PhoneNumber']) ?>" disabled>
-
-      <label>Address Line 1</label>
-      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
-
-      <label>City</label>
-      <input type="text" name="city" id="city" value="<?= htmlspecialchars($row['City']) ?>" disabled>
-
-      <label>State</label>
-      <input type="text" name="state" id="state" value="<?= htmlspecialchars($row['State']) ?>" disabled>
-
-      <label>Zip</label>
-      <input type="text" name="zip" id="zip" value="<?= htmlspecialchars($row['Zip']) ?>" disabled>
-
-      <label>Country</label>
-      <input type="text" name="country" id="country" value="<?= htmlspecialchars($row['Country']) ?>" disabled>
     </div>
 
     <div class="button-row">
