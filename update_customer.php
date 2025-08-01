@@ -1,42 +1,27 @@
 <?php
 include("config.php");
+session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id        = $_POST['customerID'];
-    $firstName = $_POST['firstName'];
-    $lastName  = $_POST['lastName'];
-    $dob       = $_POST['dob'];
-    $ssn       = $_POST['ssn'];
-    $email     = $_POST['email'];
-    $phone     = $_POST['phone'];
-    $address   = $_POST['address'];
-    $city      = $_POST['city'];
-    $state     = $_POST['state'];
-    $zip       = $_POST['zip'];
-    $country   = $_POST['country'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['CustomerID'])) {
+    $id      = $_SESSION['CustomerID'];
+    $email   = $_POST['email'];
+    $phone   = $_POST['phone'];
+    $address = $_POST['address'];
 
-    // Combine address fields into one full address
-    $fullAddress = "$address, $city, $state $zip, $country";
-
-    $sql = "UPDATE Customer SET
-            FirstName = ?, LastName = ?, DateOfBirth = ?, SSN = ?,
-            Email = ?, PhoneNumber = ?, Address = ?
-            WHERE CustomerID = ?";
-
+    $sql = "UPDATE Customer SET Email = ?, PhoneNumber = ?, Address = ? WHERE CustomerID = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $fullAddress, $id);
+    $stmt->bind_param("sssi", $email, $phone, $address, $id);
 
     if ($stmt->execute()) {
-        // ✅ Redirect back to profile_view with ID and success flag
-        header("Location: profile_view.php?id=$id&status=success");
-        exit;
+        header("Location: profile_view.php?status=success");
     } else {
-        // ❌ Redirect back with error
-        header("Location: profile_view.php?id=$id&status=error&msg=" . urlencode($stmt->error));
-        exit;
+        header("Location: profile_view.php?status=error&msg=" . urlencode($stmt->error));
     }
 
     $stmt->close();
     $conn->close();
+} else {
+    header("Location: login.php");
+    exit;
 }
 ?>
