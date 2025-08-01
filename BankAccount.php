@@ -10,6 +10,9 @@ else {
 
     echo "No Customer ID Found!";
 }
+
+$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
 /*
     selecting whatever query template
 

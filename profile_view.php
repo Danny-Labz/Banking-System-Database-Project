@@ -1,6 +1,7 @@
 <?php
 include 'config.php';
 
+
 $statusMessage = "";
 
 // Database connection confirmation
