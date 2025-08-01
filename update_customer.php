@@ -2,7 +2,7 @@
 include("config.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id        = intval($_POST['customerID']);
+    $id        = $_POST['customerID'];
     $firstName = $_POST['firstName'];
     $lastName  = $_POST['lastName'];
     $dob       = $_POST['dob'];
@@ -15,24 +15,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $zip       = $_POST['zip'];
     $country   = $_POST['country'];
 
-    $stmt = $conn->prepare("UPDATE Customer SET
-        FirstName = ?, LastName = ?, DateOfBirth = ?, SSN = ?,
-        Email = ?, PhoneNumber = ?, Address = ?, City = ?, State = ?, Zip = ?, Country = ?
-        WHERE CustomerID = ?");
+    // Combine address fields into one full address
+    $fullAddress = "$address, $city, $state $zip, $country";
 
-    $stmt->bind_param("sssssssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $id);
+    $sql = "UPDATE Customer SET
+            FirstName = ?, LastName = ?, DateOfBirth = ?, SSN = ?,
+            Email = ?, PhoneNumber = ?, Address = ?
+            WHERE CustomerID = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $fullAddress, $id);
 
     if ($stmt->execute()) {
-        $stmt->close();
-        $conn->close();
-        header("Location: profile_view.php?id=$id&updated=true");
-        exit();
+        // ✅ Redirect back to profile_view with ID and success flag
+        header("Location: profile_view.php?id=$id&status=success");
+        exit;
     } else {
-        echo "Error updating record: " . $stmt->error;
+        // ❌ Redirect back with error
+        header("Location: profile_view.php?id=$id&status=error&msg=" . urlencode($stmt->error));
+        exit;
     }
 
     $stmt->close();
     $conn->close();
-} else {
-    echo "Invalid request method.";
 }
+?>
