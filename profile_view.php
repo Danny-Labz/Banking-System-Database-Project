@@ -1,48 +1,50 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'config.php';
+
+$statusMessage = "";
+
+// Database connection confirmation
+if ($conn->connect_error) {
+    $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
+    exit;
+} else {
+    $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
+}
 
 $customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $dob = $_POST['dob'];
-  $ssn = $_POST['ssn'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
-  $address = $_POST['address'];
-  $city = $_POST['city'];
-  $state = $_POST['state'];
-  $zip = $_POST['zip'];
-  $country = $_POST['country'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $dob = $_POST['dob'];
+    $ssn = $_POST['ssn'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+    $city = $_POST['city'];
+    $state = $_POST['state'];
+    $zip = $_POST['zip'];
+    $country = $_POST['country'];
 
-  $stmt = $conn->prepare("UPDATE Customer SET
-    FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=?, City=?, State=?, Zip=?, Country=?
-    WHERE CustomerID=?");
+    $stmt = $conn->prepare("UPDATE Customer SET FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=?, City=?, State=?, Zip=?, Country=? WHERE CustomerID=?");
+    $stmt->bind_param("sssssssssssi", $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $customerID);
 
-  $stmt->bind_param("sssssssssssi",
-    $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $customerID
-  );
-
-  if ($stmt->execute()) {
-    echo "<script>alert('Customer updated successfully'); window.location.href='profile_view.php?id=$customerID';</script>";
-    exit;
-  } else {
-    echo "Error: " . $stmt->error;
-  }
+    if ($stmt->execute()) {
+        $statusMessage .= "<p style='color:green;'>✅ Customer updated successfully.</p>";
+    } else {
+        $statusMessage .= "<p style='color:red;'>❌ Update failed: " . $stmt->error . "</p>";
+    }
 }
 
 $sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
-  $row = $result->fetch_assoc();
+    $row = $result->fetch_assoc();
+    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
 } else {
-  echo "Customer not found.";
-  exit;
+    $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -142,6 +144,14 @@ if ($result && $result->num_rows > 0) {
       background-color: #eee;
       color: #555;
     }
+    .status-box {
+      background:#fff;
+      border-radius:10px;
+      padding:1rem;
+      margin-top:2rem;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      color:#333;
+    }
   </style>
 </head>
 <body>
@@ -191,6 +201,11 @@ if ($result && $result->num_rows > 0) {
       <button type="submit" id="saveBtn">Save</button>
     </div>
   </form>
+
+  <div class="status-box">
+    <h4>🔍 System Messages</h4>
+    <?php echo $statusMessage; ?>
+  </div>
 
   <script>
     function enableEdit() {
