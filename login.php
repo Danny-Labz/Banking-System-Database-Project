@@ -19,12 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['RoleID'] = $user['RoleID'] ?? '';
             $_SESSION['Username'] = $user['Username'];
 
-            // Redirect based on role
-            if ($_SESSION['Role'] == 2) {
-                header("Location: admin.php");
-            } else {
-                header("Location: securityVerification.php");
-            }
+            header("Location: securityVerification.php");
+            
             exit;
         } else {
             $error = "Incorrect Password.";
