@@ -111,9 +111,9 @@
         <nav class=navSection>
             <ul> 
                 <li><a href="TransactionLog.php">Transaction Log</a></li>
-                <li><a href="">Profile View</a></li>
-                <li><a href="">Your Branch</a></li>
-                <li><a href="">Logout</a></li>
+                <li><a href="profile_view.php">Profile View</a></li>
+                <li><a href="Branch.php">Your Branch</a></li>
+                <li><a href="login.php">Logout</a></li>
 
                 <?php
 
