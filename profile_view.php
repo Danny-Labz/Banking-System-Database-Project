@@ -1,48 +1,32 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'config.php';
 
-$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$statusMessage = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $dob = $_POST['dob'];
-  $ssn = $_POST['ssn'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
-  $address = $_POST['address'];
-  $city = $_POST['city'];
-  $state = $_POST['state'];
-  $zip = $_POST['zip'];
-  $country = $_POST['country'];
-
-  $stmt = $conn->prepare("UPDATE Customer SET
-    FirstName=?, LastName=?, DateOfBirth=?, SSN=?, Email=?, PhoneNumber=?, Address=?, City=?, State=?, Zip=?, Country=?
-    WHERE CustomerID=?");
-
-  $stmt->bind_param("sssssssssssi",
-    $firstName, $lastName, $dob, $ssn, $email, $phone, $address, $city, $state, $zip, $country, $customerID
-  );
-
-  if ($stmt->execute()) {
-    echo "<script>alert('Customer updated successfully'); window.location.href='profile_view.php?id=$customerID';</script>";
+// Database connection confirmation
+if ($conn->connect_error) {
+    $statusMessage .= "<p style='color:red;'>Database connection failed: " . $conn->connect_error . "</p>";
     exit;
-  } else {
-    echo "Error: " . $stmt->error;
-  }
+} else {
+    $statusMessage .= "<p style='color:green;'>✅ Database connection successful.</p>";
 }
 
-$sql = "SELECT * FROM Customer WHERE CustomerID = $customerID";
-$result = $conn->query($sql);
+// Pull customer ID from query string
+$customerID = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Get customer data
+$sql = "SELECT * FROM Customer WHERE CustomerID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $customerID);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
-  $row = $result->fetch_assoc();
+    $row = $result->fetch_assoc();
+    $statusMessage .= "<p>📥 Data pulled from DB: <code>" . htmlspecialchars(json_encode($row)) . "</code></p>";
 } else {
-  echo "Customer not found.";
-  exit;
+    $statusMessage .= "<p style='color:red;'>Customer not found or invalid ID.</p>";
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -142,48 +126,58 @@ if ($result && $result->num_rows > 0) {
       background-color: #eee;
       color: #555;
     }
+    .status-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 2rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: #333;
+    }
   </style>
 </head>
 <body>
-  <form method="POST">
+  <form method="POST" action="update_customer.php">
     <div class="profile-header">
       <div class="avatar"></div>
       <div class="name">
-        <input type="text" name="firstName" id="firstName" value="<?php echo htmlspecialchars($row['FirstName']); ?>" disabled />
+        <input type="text" name="firstName" id="firstName" value="<?= htmlspecialchars($row['FirstName']) ?>" disabled />
+        <input type="hidden" name="customerID" value="<?= $customerID ?>">
       </div>
     </div>
 
     <div class="section">
       <h3>Demographics</h3>
+
       <label>Last Name</label>
-      <input type="text" name="lastName" id="lastName" value="<?php echo htmlspecialchars($row['LastName']); ?>" disabled>
+      <input type="text" name="lastName" id="lastName" value="<?= htmlspecialchars($row['LastName']) ?>" disabled>
 
       <label>Date of Birth</label>
-      <input type="date" name="dob" id="dob" value="<?php echo htmlspecialchars($row['DateOfBirth']); ?>" disabled>
+      <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($row['DateOfBirth']) ?>" disabled>
 
       <label>SSN</label>
-      <input type="text" name="ssn" id="ssn" value="<?php echo htmlspecialchars($row['SSN']); ?>" disabled>
+      <input type="text" name="ssn" id="ssn" value="<?= htmlspecialchars($row['SSN']) ?>" disabled>
 
       <label>Email</label>
-      <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($row['Email']); ?>" disabled>
+      <input type="email" name="email" id="email" value="<?= htmlspecialchars($row['Email']) ?>" disabled>
 
       <label>Phone</label>
-      <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($row['PhoneNumber']); ?>" disabled>
+      <input type="text" name="phone" id="phone" value="<?= htmlspecialchars($row['PhoneNumber']) ?>" disabled>
 
       <label>Address</label>
-      <input type="text" name="address" id="address" value="<?php echo htmlspecialchars($row['Address']); ?>" disabled>
+      <input type="text" name="address" id="address" value="<?= htmlspecialchars($row['Address']) ?>" disabled>
 
       <label>City</label>
-      <input type="text" name="city" id="city" value="<?php echo htmlspecialchars($row['City']); ?>" disabled>
+      <input type="text" name="city" id="city" value="<?= htmlspecialchars($row['City']) ?>" disabled>
 
       <label>State</label>
-      <input type="text" name="state" id="state" value="<?php echo htmlspecialchars($row['State']); ?>" disabled>
+      <input type="text" name="state" id="state" value="<?= htmlspecialchars($row['State']) ?>" disabled>
 
       <label>Zip</label>
-      <input type="text" name="zip" id="zip" value="<?php echo htmlspecialchars($row['Zip']); ?>" disabled>
+      <input type="text" name="zip" id="zip" value="<?= htmlspecialchars($row['Zip']) ?>" disabled>
 
       <label>Country</label>
-      <input type="text" name="country" id="country" value="<?php echo htmlspecialchars($row['Country']); ?>" disabled>
+      <input type="text" name="country" id="country" value="<?= htmlspecialchars($row['Country']) ?>" disabled>
     </div>
 
     <div class="button-row">
@@ -192,9 +186,14 @@ if ($result && $result->num_rows > 0) {
     </div>
   </form>
 
+  <div class="status-box">
+    <h4>🔍 System Messages</h4>
+    <?= $statusMessage ?>
+  </div>
+
   <script>
     function enableEdit() {
-      document.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'));
+      document.querySelectorAll('input:not([type=hidden])').forEach(el => el.removeAttribute('disabled'));
       document.getElementById('editBtn').style.display = 'none';
       document.getElementById('saveBtn').style.display = 'inline-block';
     }
