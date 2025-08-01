@@ -1,6 +1,6 @@
 <?php
     include("config.php");
-    include("tempNums.php");
+
 
 /*
     selecting whatever query template

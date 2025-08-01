@@ -1,7 +1,7 @@
 <?php
 
-include("database.php");
-include("tempNums.php");
+include("config.php");
+
 
 if (!$roleid == 1) {
 
